@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"></meta>
+    <title>进度指示条</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+    <div class="bamboo"></div>
+    <script type="text/javascript" src="js/progress-indicator.js"></script>
+    <script>
+        var progressBar = new ProgressIndicator();
+
+        progressBar.once("end", function(){
+            alert('恭喜您已经阅读完毕')
+        })
+    </script>
+</body>
+
+</html>
