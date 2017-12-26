@@ -105,8 +105,7 @@
         this.__events = {}
     }
 
-    var proto = EventEmitter.prototype;
-    proto.on = function(eventName, listener) {
+    EventEmitter.prototype.on = function(eventName, listener) {
         if (!eventName || !listener) return;
 
         if (!util.isValidListener(listener)) {
@@ -127,13 +126,13 @@
 
         return this;
     };
-    proto.once = function(eventName, listener) {
+    EventEmitter.prototype.once = function(eventName, listener) {
         return this.on(eventName, {
             listener: listener,
             once: true
         })
     };
-    proto.off = function(eventName, listener) {
+    EventEmitter.prototype.off = function(eventName, listener) {
         var listeners = this.__events[eventName];
         if (!listeners) return;
 
@@ -151,7 +150,7 @@
 
         return this;
     };
-    proto.emit = function(eventName, args) {
+    EventEmitter.prototype.emit = function(eventName, args) {
         var listeners = this.__events[eventName];
         if (!listeners) return;
 
