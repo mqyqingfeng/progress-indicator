@@ -91,3 +91,11 @@ progressBar.once("end", function(){
     alert('恭喜您已经阅读完毕')
 })
 ```
+
+移除进度条
+
+```js
+progressBar.removeProgress(function() {
+    console.log('移除成功')
+})
+```
