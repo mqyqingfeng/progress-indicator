@@ -98,6 +98,59 @@
                 }
                 return result;
             }
+        },
+        // 移除事件
+        removeEvent: function (element, type, fn) {
+            if (document.removeEventListener) {
+                element.removeEventListener(type, fn, false);
+                return fn;
+            } else if (document.attachEvent) {
+                var bound = function () {
+                    return fn.apply(element, arguments)
+                }
+                element.detachEvent('on' + type, bound);
+                return bound;
+            }
+        },
+        // 是否为id选择器
+        isIdSelector: function(selector) {
+            return selector.indexOf('#') > -1
+        },
+        // 是否为类选择器
+        isClassSelector: function(selector) {
+            return selector.indexOf('.') > -1
+        },
+        // 获取元素
+        getEle: function(selector) {
+            var doc = document
+            var dom = null
+
+            if (doc.querySelector) {
+                dom = doc.querySelector(selector)
+            }
+
+            if (!dom && util.isIdSelector(selector)) {
+                var ids = selector.split('#')[1]
+                dom = doc.getElementById(ids)
+            }
+
+            if (!dom && util.isClassSelector(selector)) {
+                var cls = selector.split('.')[1]
+                var selectDom = doc.getElementsByClassName(cls)
+                dom = selectDom ? selectDom[0] : null
+            }
+
+            return dom
+        },
+        // 移除DOM元素
+        removeDom: function (selector) {
+            if (selector && typeof selector === 'string') {
+                var dom = util.getEle(selector)
+                dom && dom.parentNode && dom.parentNode.removeChild(dom)
+            }
+        },
+        isFunction: function(fn) {
+            return typeof fn === 'function'
         }
     };
 
@@ -236,8 +289,8 @@
         var self = this;
         var prev;
 
-        util.addEvent(window, "scroll", function() {
-            window.requestAnimationFrame(function() {
+        this.scrollHandler = function () {
+            window.requestAnimationFrame(function () {
                 var perc = Math.min(util.getScrollOffsetsTop() / self.sHeight, 1);
                 // 火狐中有可能连续计算为 1，导致 end 事件被触发两次
                 if (perc == prev) return;
@@ -249,7 +302,20 @@
                 prev = perc;
                 self.setWidth(perc);
             });
-        })
+        }
+
+        util.addEvent(window, "scroll", this.scrollHandler)
+    }
+
+    // 移除进度条
+    proto.removeProgress = function (fn) {
+        if (util.isFunction(this.scrollHandler)) {
+            util.removeEvent(window, "scroll", this.scrollHandler)
+            util.removeDom("#progress-indicator")
+
+            // 回调函数
+            util.isFunction(fn) && fn()
+        }
     }
 
     if (typeof exports != 'undefined' && !exports.nodeType) {
