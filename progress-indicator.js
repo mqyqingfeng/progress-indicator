@@ -98,6 +98,22 @@
                 }
                 return result;
             }
+        },
+        includes: function(array, item) {
+            if (array.some) {
+                return array.some(function (v) {
+                    return v.listener === item.listener && v.once === item.once;
+                })
+            }
+
+            var result = false
+            for (var i = 0, len = array.length; i < len; i++) {
+                if (array[i].listener === item.listener && array[i].once === item.once) {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
     };
 
@@ -117,7 +133,7 @@
         var listenerIsWrapped = typeof listener === 'object';
 
         // 不重复添加事件
-        if (util.indexOf(listeners, listener) === -1) {
+        if (!util.includes(listeners, listener)) {
             listeners.push(listenerIsWrapped ? listener : {
                 listener: listener,
                 once: false
